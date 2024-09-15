@@ -7,6 +7,8 @@ string connectionString = builder.Configuration.GetConnectionString("SqlServer")
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers().AddApplicationPart(typeof(CleanArchitecure.Presentation.AssemblyReference).Assembly);
+builder.Services.AddMediatR(cfr => cfr.RegisterServicesFromAssembly(typeof(CleanArchitecture.Application.AssemblyReference).Assembly));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
