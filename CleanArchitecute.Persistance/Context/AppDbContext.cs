@@ -1,21 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CleanArchitecture.Domain.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecute.Persistance.Context;
 
 public sealed class AppDbContext : DbContext
 {
-    //AppDbContext context = new();
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    base.OnConfiguring(optionsBuilder);
-    //}
-
-    private readonly AppDbContext _context;
-    public AppDbContext(AppDbContext context)
-    {
-        _context = context;
-    }
+    
     public AppDbContext(DbContextOptions options) : base(options)
     {
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<Entity>();
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Property(p => p.CreatedDate).CurrentValue = DateTime.Now;
+            }
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Property(p => p.UpdatedDate).CurrentValue = DateTime.Now;
+            }
+        }
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
 }
