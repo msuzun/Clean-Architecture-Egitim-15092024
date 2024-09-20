@@ -14,11 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddTransient<ExceptionMiddleware>();
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(typeof(CleanArchitecute.Persistance.AssemblyReference).Assembly);
 string connectionString = builder.Configuration.GetConnectionString("SqlServer");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = true;
+}).AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddControllers().AddApplicationPart(typeof(CleanArchitecure.Presentation.AssemblyReference).Assembly);
 builder.Services.AddMediatR(cfr => cfr.RegisterServicesFromAssembly(typeof(CleanArchitecture.Application.AssemblyReference).Assembly));
