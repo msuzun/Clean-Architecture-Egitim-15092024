@@ -4,6 +4,7 @@ using CleanArchitecture.Application.Features.CarFeatures.Queries.GetAllCar;
 using CleanArchitecture.Application.Services;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecute.Persistance.Context;
+using EntityFrameworkCorePagination.Nuget.Pagination;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,9 @@ namespace CleanArchitecute.Persistance.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IList<Car>> GetAllAsync(GetAllCarQuery request, CancellationToken cancellationToken)
+        public async Task<PaginationResult<Car>> GetAllAsync(GetAllCarQuery request, CancellationToken cancellationToken)
         {
-            IList<Car> cars = await _context.Set<Car>().ToListAsync(cancellationToken);
+            PaginationResult<Car> cars = await _context.Set<Car>().OrderBy(p=>p.Name).ToPagedListAsync(request.pageNumer, request.pageSize, cancellationToken);
             return cars;
         }
     }
