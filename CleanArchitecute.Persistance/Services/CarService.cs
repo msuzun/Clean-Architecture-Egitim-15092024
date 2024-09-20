@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CleanArchitecture.Application.Features.CarFeatures.Commands.CreateCar;
+using CleanArchitecture.Application.Features.CarFeatures.Queries.GetAllCar;
 using CleanArchitecture.Application.Services;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecute.Persistance.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,12 @@ namespace CleanArchitecute.Persistance.Services
             Car car = _mapper.Map<Car>(reuest);
             await _context.Set<Car>().AddAsync(car, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IList<Car>> GetAllAsync(GetAllCarQuery request, CancellationToken cancellationToken)
+        {
+            IList<Car> cars = await _context.Set<Car>().ToListAsync(cancellationToken);
+            return cars;
         }
     }
 }

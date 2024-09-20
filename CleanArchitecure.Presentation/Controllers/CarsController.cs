@@ -1,5 +1,7 @@
 ﻿using CleanArchitecture.Application.Features.CarFeatures.Commands.CreateCar;
+using CleanArchitecture.Application.Features.CarFeatures.Queries.GetAllCar;
 using CleanArchitecture.Domain.Dtos;
+using CleanArchitecture.Domain.Entities;
 using CleanArchitecure.Presentation.Abstraction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +20,10 @@ public sealed class CarsController : ApiController
        MessageResponse response =  await _mediator.Send(request, cancellationToken);
         return Ok(response);
     }
-    [HttpGet]
-    public IActionResult Calculate()
+    [HttpPost("[action]")]
+    public async Task<IActionResult> GetAll(GetAllCarQuery request, CancellationToken cancellationToken)
     {
-        int x = 0;
-        int y = 0;
-        int result = x / y;
-        return Ok();
+        IList<Car> response = await _mediator.Send(request, cancellationToken);
+        return Ok(response);
     }
 }
